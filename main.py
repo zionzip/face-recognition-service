@@ -2,7 +2,6 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from pydantic import BaseModel
 import numpy as np
 import cv2
-from deepface import DeepFace
 
 app = FastAPI()
 
@@ -12,6 +11,7 @@ def health():
 
 @app.post("/embed")
 async def embed(file: UploadFile = File(...)):
+    from deepface import DeepFace
     contents = await file.read()
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
