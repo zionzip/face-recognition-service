@@ -18,8 +18,12 @@ async def embed(file: UploadFile = File(...)):
     if img is None:
         raise HTTPException(status_code=400, detail="Invalid image")
     try:
-        result = DeepFace.represent(img, model_name="Facenet", enforce_detection=True)
+        result = DeepFace.represent(img, model_name="Facenet", enforce_detection=False)
+        if not result or "embedding" not in result[0]:
+            raise HTTPException(status_code=422, detail="Could not extract embedding")
         return {"embedding": result[0]["embedding"]}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=422, detail=f"No face detected: {str(e)}")
 
